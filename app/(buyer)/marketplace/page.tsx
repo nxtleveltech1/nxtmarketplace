@@ -16,9 +16,15 @@ export default async function MarketplacePage({
 
   // Convert Date objects to strings for the client component
   const listingsForClient = listings.map((listing) => ({
-    ...listing,
+    id: listing.id,
+    title: listing.title,
+    description: listing.description,
+    priceCents: listing.priceCents,
+    status: listing.status,
+    sellerLocation: listing.sellerLocation,
     createdAt: listing.createdAt ? listing.createdAt.toISOString() : null,
-    updatedAt: listing.updatedAt ? listing.updatedAt.toISOString() : null,
+    images: [],
+    category: undefined,
   }));
 
   return (
