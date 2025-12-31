@@ -14,7 +14,6 @@ export async function POST() {
     const result = await seedListings();
 
     return NextResponse.json({
-      success: true,
       message: `Successfully created ${result.listingsCreated} listings`,
       ...result,
     });
