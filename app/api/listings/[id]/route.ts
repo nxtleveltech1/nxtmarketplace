@@ -77,7 +77,6 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { id } = await params;
     const updatedListing = await updateListing(id, body);
 
     return NextResponse.json(updatedListing);

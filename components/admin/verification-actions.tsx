@@ -24,8 +24,9 @@ export function VerifyButton({ verificationId }: VerifyButtonProps) {
       if (!res.ok) throw new Error("Failed to verify item");
       toast.success("Item verified!");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to verify item");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to verify item";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +58,9 @@ export function FailButton({ verificationId }: FailButtonProps) {
       if (!res.ok) throw new Error("Failed to mark verification as failed");
       toast.success("Verification marked as failed");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to mark verification as failed");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to mark verification as failed";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

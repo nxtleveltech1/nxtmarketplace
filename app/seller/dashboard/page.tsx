@@ -38,7 +38,7 @@ export default async function SellerDashboardPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Seller Dashboard</h1>
-        <Link href="/listings/create">
+        <Link href="/seller/listings/create">
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Create Listing
@@ -94,7 +94,7 @@ export default async function SellerDashboardPage() {
                 {listings.slice(0, 5).map((listing) => (
                   <Link
                     key={listing.id}
-                    href={`/listings/${listing.id}`}
+                    href={`/seller/listings/${listing.id}`}
                     className="block p-2 hover:bg-muted rounded"
                   >
                     <p className="font-medium">{listing.title}</p>
@@ -117,7 +117,7 @@ export default async function SellerDashboardPage() {
                 {sales.slice(0, 5).map((sale) => (
                   <Link
                     key={sale.id}
-                    href={`/sales/${sale.id}`}
+                    href={`/seller/sales/${sale.id}`}
                     className="block p-2 hover:bg-muted rounded"
                   >
                     <p className="font-medium">Sale #{sale.id.slice(0, 8)}</p>

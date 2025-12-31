@@ -36,7 +36,7 @@ export default async function SellerListingDetailPage({
 
   // Check ownership
   if (listing.sellerId !== user.id && user.role !== "ADMIN") {
-    redirect("/listings");
+    redirect("/seller/listings");
   }
 
   const verification = await getVerificationByListingId(listing.id);
@@ -45,7 +45,7 @@ export default async function SellerListingDetailPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <Link href="/listings">
+        <Link href="/seller/listings">
           <Button variant="outline">← Back to Listings</Button>
         </Link>
       </div>
@@ -117,7 +117,7 @@ export default async function SellerListingDetailPage({
                 <p className="mb-4 text-muted-foreground">
                   Your listing was rejected. Please review and update it before resubmitting.
                 </p>
-                <Link href={`/listings/${listing.id}/edit`}>
+                <Link href={`/seller/listings/${listing.id}/edit`}>
                   <Button>Edit & Resubmit</Button>
                 </Link>
               </CardContent>

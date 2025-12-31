@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
               <Link href="/marketplace">Browse Marketplace</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/marketplace">Marketplace</Link>
             </Button>
           </div>
         </SignedIn>

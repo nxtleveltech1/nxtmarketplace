@@ -22,7 +22,7 @@ export async function getCourierShipmentsBySaleId(saleId: string) {
 export async function createCourierShipment(data: {
   saleId: string;
   direction: "SELLER_TO_NXT" | "NXT_TO_BUYER";
-  status?: string;
+  status?: "NOT_REQUIRED" | "AWAITING_PICKUP" | "IN_TRANSIT" | "RECEIVED_AT_NXT" | "DISPATCHED_TO_BUYER" | "DELIVERED";
   trackingReference?: string;
   costCents?: number;
 }) {
@@ -42,10 +42,10 @@ export async function createCourierShipment(data: {
 
 export async function updateCourierShipmentStatus(
   id: string,
-  status: string,
+  status: "NOT_REQUIRED" | "AWAITING_PICKUP" | "IN_TRANSIT" | "RECEIVED_AT_NXT" | "DISPATCHED_TO_BUYER" | "DELIVERED",
   trackingReference?: string
 ) {
-  const updates: any = {
+  const updates: { status: typeof status; trackingReference?: string } = {
     status,
   };
 

@@ -77,10 +77,15 @@ export async function createSale(data: {
 
 export async function updateSaleStatus(
   id: string,
-  status: string,
-  financialStatus?: string
+  status: "INITIATED" | "PENDING_VERIFICATION" | "CONFIRMED" | "DISPATCHED" | "DELIVERED" | "COMPLETED" | "CANCELLED",
+  financialStatus?: "PENDING" | "HELD_IN_ESCROW" | "SETTLED" | "PAID_OUT" | "REFUNDED"
 ) {
-  const updates: any = {
+  const updates: { 
+    status: typeof status; 
+    updatedAt: Date; 
+    financialStatus?: typeof financialStatus; 
+    completedAt?: Date 
+  } = {
     status,
     updatedAt: new Date(),
   };
@@ -91,7 +96,7 @@ export async function updateSaleStatus(
 
   if (status === "COMPLETED") {
     updates.completedAt = new Date();
-    updates.financialStatus = financialStatus || "PAID_OUT";
+    updates.financialStatus = (financialStatus || "PAID_OUT") as "PENDING" | "HELD_IN_ESCROW" | "SETTLED" | "PAID_OUT" | "REFUNDED";
   }
 
   const [updatedSale] = await db
@@ -104,7 +109,7 @@ export async function updateSaleStatus(
 
 export async function updateSaleFinancialStatus(
   id: string,
-  financialStatus: string
+  financialStatus: "PENDING" | "HELD_IN_ESCROW" | "SETTLED" | "PAID_OUT" | "REFUNDED"
 ) {
   const [updatedSale] = await db
     .update(sales)

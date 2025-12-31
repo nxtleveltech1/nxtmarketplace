@@ -31,8 +31,7 @@ export async function POST(
       );
     }
 
-    const body = await req.json();
-    const { feedback } = body; // Optional feedback for rejection
+    await req.json(); // Consume body (may contain optional feedback)
 
     const rejectedListing = await rejectListing(id);
 

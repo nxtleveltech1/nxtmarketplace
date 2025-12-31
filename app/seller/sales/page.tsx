@@ -46,7 +46,7 @@ export default async function SellerSalesPage() {
       ) : (
         <div className="space-y-4">
           {sales.map((sale) => (
-            <Link key={sale.id} href={`/sales/${sale.id}`}>
+            <Link key={sale.id} href={`/seller/sales/${sale.id}`}>
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start">

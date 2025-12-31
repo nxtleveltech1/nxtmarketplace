@@ -10,7 +10,7 @@ interface PurchaseButtonProps {
   priceCents: number;
 }
 
-export function PurchaseButton({ listingId, priceCents }: PurchaseButtonProps) {
+export function PurchaseButton({ listingId }: PurchaseButtonProps) {
   const router = useRouter();
   const createSale = useCreateSale();
 
@@ -22,8 +22,9 @@ export function PurchaseButton({ listingId, priceCents }: PurchaseButtonProps) {
       });
       toast.success("Purchase successful!");
       router.push(`/orders/${sale.id}`);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete purchase");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to complete purchase";
+      toast.error(message);
     }
   };
 

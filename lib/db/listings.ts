@@ -1,6 +1,6 @@
 import { listingImages, listings } from "@/db/schema";
 import { db } from "@/lib/db";
-import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, desc, eq, or, sql } from "drizzle-orm";
 
 export async function getListingById(id: string) {
   const [listing] = await db.select().from(listings).where(eq(listings.id, id)).limit(1);
@@ -16,10 +16,11 @@ export async function getListingsBySellerId(sellerId: string) {
 }
 
 export async function getListingsByStatus(status: string[]) {
+  const conditions = status.map((s) => eq(listings.status, s as "DRAFT" | "SUBMITTED" | "UNDER_ADMIN_REVIEW" | "REJECTED" | "APPROVED" | "LIVE"));
   return await db
     .select()
     .from(listings)
-    .where(inArray(listings.status, status))
+    .where(or(...conditions)!)
     .orderBy(desc(listings.createdAt));
 }
 
@@ -33,7 +34,8 @@ export async function getPublicListings(filters?: {
   const conditions = [eq(listings.status, "LIVE")];
 
   if (filters?.status) {
-    conditions.push(inArray(listings.status, filters.status));
+    const statusConditions = filters.status.map((s) => eq(listings.status, s as "DRAFT" | "SUBMITTED" | "UNDER_ADMIN_REVIEW" | "REJECTED" | "APPROVED" | "LIVE"));
+    conditions.push(or(...statusConditions)!);
   }
 
   if (filters?.search) {
@@ -49,13 +51,14 @@ export async function getPublicListings(filters?: {
     .select()
     .from(listings)
     .where(and(...conditions))
-    .orderBy(desc(listings.createdAt));
+    .orderBy(desc(listings.createdAt))
+    .$dynamic();
 
   if (filters?.limit) {
-    query = query.limit(filters.limit);
+    query = query.limit(filters.limit) as typeof query;
   }
   if (filters?.offset) {
-    query = query.offset(filters.offset);
+    query = query.offset(filters.offset) as typeof query;
   }
 
   return await query;
@@ -92,7 +95,7 @@ export async function updateListing(
     description?: string;
     priceCents?: number;
     sellerLocation?: string;
-    status?: string;
+    status?: "DRAFT" | "SUBMITTED" | "UNDER_ADMIN_REVIEW" | "REJECTED" | "APPROVED" | "LIVE";
   }
 ) {
   const [updatedListing] = await db
@@ -175,7 +178,7 @@ export async function publishListing(id: string) {
       status: "LIVE",
       updatedAt: new Date(),
     })
-    .where(eq(listings.status, "APPROVED"))
+    .where(and(eq(listings.id, id), eq(listings.status, "APPROVED")))
     .returning();
   return updatedListing;
 }

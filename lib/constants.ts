@@ -52,3 +52,6 @@ export const USER_ROLES = ["SELLER", "BUYER", "ADMIN"] as const;
 
 export const COMMISSION_RATE = 0.2; // 20%
 
+export const PRODUCTION_DOMAIN = "nxtdotx.co.za";
+export const PRODUCTION_URL = `https://${PRODUCTION_DOMAIN}`;
+

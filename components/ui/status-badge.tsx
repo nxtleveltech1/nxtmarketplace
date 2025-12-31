@@ -40,7 +40,6 @@ const statusColors: Record<string, string> = {
   IN_TRANSIT: "bg-purple-500",
   RECEIVED_AT_NXT: "bg-yellow-500",
   DISPATCHED_TO_BUYER: "bg-blue-500",
-  DELIVERED: "bg-green-500",
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {

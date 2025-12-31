@@ -25,12 +25,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { z } from "zod";
 
 export default function CreateListingPage() {
   const router = useRouter();
   const createListing = useCreateListing();
-  const [step, setStep] = useState(1);
 
   const form = useForm({
     resolver: zodResolver(createListingSchema),
@@ -43,7 +42,7 @@ export default function CreateListingPage() {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: z.infer<typeof createListingSchema>) => {
     try {
       const listing = await createListing.mutateAsync({
         title: data.title,
@@ -53,9 +52,10 @@ export default function CreateListingPage() {
         status: "DRAFT",
       });
       toast.success("Listing created successfully!");
-      router.push(`/listings/${listing.id}`);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create listing");
+      router.push(`/seller/listings/${listing.id}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create listing";
+      toast.error(message);
     }
   };
 

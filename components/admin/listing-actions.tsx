@@ -22,8 +22,9 @@ export function ApproveButton({ listingId }: ApproveButtonProps) {
       if (!res.ok) throw new Error("Failed to approve listing");
       toast.success("Listing approved!");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to approve listing");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to approve listing";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -55,8 +56,9 @@ export function RejectButton({ listingId }: RejectButtonProps) {
       if (!res.ok) throw new Error("Failed to reject listing");
       toast.success("Listing rejected");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to reject listing");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to reject listing";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

@@ -3,9 +3,7 @@ import { getVerificationByListingId } from "@/lib/db/verifications";
 import { PriceDisplay } from "@/components/ui/price-display";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { VerificationBadge } from "@/components/ui/verification-badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PurchaseButton } from "@/components/listings/purchase-button";
 
