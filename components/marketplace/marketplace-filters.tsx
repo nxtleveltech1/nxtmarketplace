@@ -15,7 +15,7 @@ import { useCallback, useTransition } from "react";
 export function MarketplaceFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "newest";
