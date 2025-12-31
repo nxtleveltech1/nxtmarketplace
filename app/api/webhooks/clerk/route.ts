@@ -1,6 +1,5 @@
 import { createUser, updateUser } from "@/lib/db/users";
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { nanoid } from "nanoid";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 
@@ -54,15 +53,22 @@ export async function POST(req: Request) {
   
   if (eventType === "user.created") {
     const { id, email_addresses, first_name, last_name, image_url } = evt.data;
+    const email = email_addresses[0]?.email_address || "";
+    
+    // Generate displayName from firstName/lastName or use email
+    const displayName = first_name && last_name
+      ? `${first_name} ${last_name}`.trim()
+      : first_name || last_name || email.split("@")[0] || "User";
 
     try {
       await createUser({
-        id: nanoid(),
         clerkId: id,
-        email: email_addresses[0]?.email_address || "",
+        email,
+        displayName,
         firstName: first_name || undefined,
         lastName: last_name || undefined,
         imageUrl: image_url || undefined,
+        role: "BUYER", // Default role
       });
 
       return new Response("User created", { status: 200 });
@@ -74,10 +80,17 @@ export async function POST(req: Request) {
 
   if (eventType === "user.updated") {
     const { id, email_addresses, first_name, last_name, image_url } = evt.data;
+    const email = email_addresses[0]?.email_address;
+    
+    // Generate displayName from firstName/lastName or use email
+    const displayName = first_name && last_name
+      ? `${first_name} ${last_name}`.trim()
+      : first_name || last_name || (email ? email.split("@")[0] : undefined);
 
     try {
       await updateUser(id, {
-        email: email_addresses[0]?.email_address,
+        email,
+        displayName,
         firstName: first_name || undefined,
         lastName: last_name || undefined,
         imageUrl: image_url || undefined,

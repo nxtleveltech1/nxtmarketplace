@@ -13,17 +13,24 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function createUser(userData: {
-  id: string;
   clerkId: string;
   email: string;
+  displayName: string;
   firstName?: string;
   lastName?: string;
   imageUrl?: string;
+  role?: "SELLER" | "BUYER" | "ADMIN";
 }) {
   const [newUser] = await db
     .insert(users)
     .values({
-      ...userData,
+      clerkId: userData.clerkId,
+      email: userData.email,
+      displayName: userData.displayName,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      imageUrl: userData.imageUrl,
+      role: userData.role || "BUYER",
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -33,6 +40,7 @@ export async function createUser(userData: {
 
 export async function updateUser(clerkId: string, updates: {
   email?: string;
+  displayName?: string;
   firstName?: string;
   lastName?: string;
   imageUrl?: string;
