@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error creating message:", error);
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid request data", details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: "Invalid request data", details: error.issues }, { status: 400 });
     }
     return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
   }
