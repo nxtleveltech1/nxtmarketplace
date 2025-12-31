@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
@@ -32,8 +31,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
+  const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  
+  // During build, if Clerk key is missing, render without ClerkProvider
+  // This allows the build to complete, but Clerk features won't work until env vars are set
+  if (!clerkPublishableKey && (process.env.NEXT_PHASE === "phase-production-build" || process.env.VERCEL)) {
+    return (
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -41,10 +44,61 @@ export default function RootLayout({
           <Providers>
             <header className="border-b">
               <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div className="flex gap-4">
+                  <Link
+                    href="/sign-in"
+                    className="text-sm font-medium hover:underline"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="text-sm font-medium border border-border px-4 py-2 rounded-md hover:bg-accent"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              </div>
+            </header>
+            {children}
+            <Toaster />
+          </Providers>
+        </body>
+      </html>
+    );
+  }
+
+  return (
+    <ClerkProvider
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/onboarding"
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+    >
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Providers>
+            <header className="border-b">
+              <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                <Link href="/home" className="text-xl font-bold">
+                  NXT Marketplace
+                </Link>
                 <SignedOut>
                   <div className="flex gap-4">
-                    <SignInButton />
-                    <SignUpButton />
+                    <Link
+                      href="/sign-in"
+                      className="text-sm font-medium hover:underline"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/sign-up"
+                      className="text-sm font-medium border border-border px-4 py-2 rounded-md hover:bg-accent"
+                    >
+                      Sign Up
+                    </Link>
                   </div>
                 </SignedOut>
                 <SignedIn>

@@ -10,7 +10,7 @@ export function Header() {
   return (
     <header className="border-b sticky top-0 z-50 bg-background">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold">
+        <Link href="/home" className="text-xl font-bold">
           NXT Marketplace
         </Link>
         <nav className="flex items-center gap-6">
