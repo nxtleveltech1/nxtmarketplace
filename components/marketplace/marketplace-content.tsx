@@ -61,13 +61,9 @@ export function MarketplaceContent({ initialListings, initialSearch = "" }: Mark
   }, [listings, initialSearch, filters]);
 
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 min-h-0">
       {/* Sidebar */}
-      <aside className="hidden lg:block">
-        <div className="sticky top-16 h-[calc(100vh-4rem)]">
-          <MarketplaceSidebarNew filters={filters} onFiltersChange={setFilters} totalResults={filteredListings.length} />
-        </div>
-      </aside>
+      <MarketplaceSidebarNew filters={filters} onFiltersChange={setFilters} totalResults={filteredListings.length} />
 
       {/* Main Content */}
       <main className="flex-1">

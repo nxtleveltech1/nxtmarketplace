@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 
 type ContactSellerButtonProps = {
@@ -21,10 +22,32 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dbUserId, setDbUserId] = useState<string | null>(null);
   const router = useRouter();
+  const { user, isLoaded } = useUser();
+
+  // Fetch database user ID when Clerk user is loaded
+  useEffect(() => {
+    if (isLoaded && user && !currentUserId) {
+      fetch("/api/users")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.id) {
+            setDbUserId(data.id);
+          }
+        })
+        .catch(() => {
+          // User might not exist in DB yet
+        });
+    } else if (currentUserId) {
+      setDbUserId(currentUserId);
+    }
+  }, [user, isLoaded, currentUserId]);
 
   const handleSendMessage = async () => {
-    if (!currentUserId) {
+    const userId = dbUserId || currentUserId;
+    
+    if (!userId || !isLoaded || !user) {
       toast.error("Please sign in to contact the seller");
       router.push("/sign-in");
       return;
@@ -35,7 +58,7 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
       return;
     }
 
-    if (currentUserId === sellerId) {
+    if (userId === sellerId) {
       toast.error("You cannot message yourself");
       return;
     }
@@ -60,9 +83,6 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
       toast.success("Message sent successfully!");
       setMessage("");
       setOpen(false);
-      // Redirect to messages page if it exists, otherwise refresh
-      router.push("/messages");
-      router.refresh();
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error(error instanceof Error ? error.message : "Failed to send message");
@@ -71,7 +91,18 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
     }
   };
 
-  if (!currentUserId) {
+  const userId = dbUserId || currentUserId;
+  
+  if (!isLoaded) {
+    return (
+      <Button variant="outline" className="w-full" disabled>
+        <MessageSquare className="size-4 mr-2" />
+        Loading...
+      </Button>
+    );
+  }
+
+  if (!userId || !user) {
     return (
       <Button onClick={() => router.push("/sign-in")} variant="outline" className="w-full">
         <MessageSquare className="size-4 mr-2" />
@@ -80,7 +111,7 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
     );
   }
 
-  if (currentUserId === sellerId) {
+  if (userId === sellerId) {
     return null;
   }
 

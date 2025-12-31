@@ -32,8 +32,16 @@ export default async function ListingDetailPage({
   const seller = await getUserById(listing.sellerId);
 
   // Get current user if authenticated
-  const { userId } = await auth();
-  const currentUser = userId ? await getUserByClerkId(userId) : null;
+  let currentUser = null;
+  try {
+    const { userId } = await auth();
+    if (userId) {
+      currentUser = await getUserByClerkId(userId);
+    }
+  } catch (error) {
+    // Auth might fail in some cases, continue without user
+    console.error("Error fetching current user:", error);
+  }
 
   return (
     <div className="min-h-screen bg-background">

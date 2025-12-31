@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
-import { getUserByClerkId } from "@/lib/db/users";
 import { createMessage } from "@/lib/db/messages";
+import { getUserByClerkId } from "@/lib/db/users";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
