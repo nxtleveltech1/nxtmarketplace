@@ -1,6 +1,6 @@
 import { MarketplaceHeader } from "@/components/marketplace/marketplace-header";
 import { MarketplaceContent } from "@/components/marketplace/marketplace-content";
-import { getPublicListings } from "@/lib/db/listings";
+import { getPublicListings, getListingImages } from "@/lib/db/listings";
 
 export default async function MarketplacePage({
   searchParams,
@@ -14,8 +14,19 @@ export default async function MarketplacePage({
     limit: 100,
   });
 
+  // Fetch images for each listing
+  const listingsWithImages = await Promise.all(
+    listings.map(async (listing) => {
+      const images = await getListingImages(listing.id);
+      return {
+        ...listing,
+        images: images.map((img) => img.imageUrl),
+      };
+    })
+  );
+
   // Convert Date objects to strings for the client component
-  const listingsForClient = listings.map((listing) => ({
+  const listingsForClient = listingsWithImages.map((listing) => ({
     id: listing.id,
     title: listing.title,
     description: listing.description,
@@ -23,7 +34,7 @@ export default async function MarketplacePage({
     status: listing.status,
     sellerLocation: listing.sellerLocation,
     createdAt: listing.createdAt ? listing.createdAt.toISOString() : null,
-    images: [],
+    images: listing.images || [],
     category: undefined,
   }));
 

@@ -1,3 +1,7 @@
+// Load environment variables FIRST before any imports that need them
+import { config } from "dotenv";
+config({ path: ".env.local" });
+
 import { listingImages, listings, users, verifications } from "@/db/schema";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
@@ -9,16 +13,16 @@ const audioVisualProducts = [
     title: "Professional Studio Condenser Microphone",
     description:
       "High-quality large diaphragm condenser microphone perfect for vocals, podcasts, and streaming. Features XLR connection, cardioid polar pattern, 20Hz-20kHz frequency response. Includes shock mount and pop filter. Ideal for home studios and professional recording.",
-    priceCents: 29999, // $299.99
-    sellerLocation: "Los Angeles, CA",
+    priceCents: 554900, // R5,549.00 (approx $299.99 * 18.5)
+    sellerLocation: "Cape Town, South Africa",
     images: ["/studio-condenser-microphone.jpg", "/microphone-with-shock-mount.jpg", "/microphone-pop-filter.png"],
   },
   {
     title: "USB Dynamic Microphone for Podcasting",
     description:
       "Plug-and-play USB dynamic microphone with cardioid pattern. Built-in headphone jack for zero-latency monitoring, mute button, and gain control. Perfect for podcasting, voiceovers, and streaming. No interface needed - works directly with your computer.",
-    priceCents: 14999, // $149.99
-    sellerLocation: "Austin, TX",
+    priceCents: 277400, // R2,774.00 (approx $149.99 * 18.5)
+    sellerLocation: "Johannesburg, South Africa",
     images: ["/usb-dynamic-podcast-microphone-black.jpg", "/usb-microphone-side-view.jpg", "/microphone-pop-filter.png"],
   },
 
@@ -27,16 +31,16 @@ const audioVisualProducts = [
     title: "Mirrorless Camera 4K Video Recording",
     description:
       "Professional mirrorless camera with 24MP sensor, 4K 60fps video, in-body stabilization, flip-out touchscreen, and dual card slots. Includes 18-55mm kit lens, battery, charger, and camera bag. Perfect for photography and videography.",
-    priceCents: 129999, // $1,299.99
-    sellerLocation: "New York, NY",
+    priceCents: 2404900, // R24,049.00 (approx $1,299.99 * 18.5)
+    sellerLocation: "Durban, South Africa",
     images: ["/mirrorless-camera-body.jpg", "/camera-with-lens-attached.jpg", "/camera-flip-screen.jpg"],
   },
   {
     title: "4K Webcam Pro with Auto-Focus",
     description:
       "Professional 4K webcam with Sony sensor, auto-focus, dual microphones, and adjustable field of view. Perfect for streaming, video conferencing, and content creation. USB-C connection with universal compatibility. Includes tripod mount and privacy cover.",
-    priceCents: 17999, // $179.99
-    sellerLocation: "San Francisco, CA",
+    priceCents: 332900, // R3,329.00 (approx $179.99 * 18.5)
+    sellerLocation: "Pretoria, South Africa",
     images: ["/4k-webcam.jpg", "/webcam-on-monitor.jpg", "/webcam-with-tripod.jpg"],
   },
 
@@ -45,16 +49,16 @@ const audioVisualProducts = [
     title: "USB Audio Interface 2-Channel",
     description:
       "Professional 2-channel USB audio interface with 24-bit/192kHz conversion. Two XLR/TRS combo inputs with preamps, phantom power, direct monitoring, MIDI I/O. Compatible with all major DAWs. Perfect for home recording and podcasting.",
-    priceCents: 14999, // $149.99
-    sellerLocation: "Austin, TX",
+    priceCents: 277400, // R2,774.00 (approx $149.99 * 18.5)
+    sellerLocation: "Cape Town, South Africa",
     images: ["/usb-audio-interface.jpg", "/audio-interface-back-panel.jpg", "/audio-interface-setup.jpg"],
   },
   {
     title: "Thunderbolt Audio Interface 8-Channel",
     description:
       "High-end 8-channel Thunderbolt audio interface with pristine preamps, 32-bit/192kHz converters, DSP effects processing, and ultra-low latency. Features ADAT expansion, wordclock, and comprehensive I/O. Professional studio quality for recording and mixing.",
-    priceCents: 79999, // $799.99
-    sellerLocation: "Los Angeles, CA",
+    priceCents: 1479900, // R14,799.00 (approx $799.99 * 18.5)
+    sellerLocation: "Johannesburg, South Africa",
     images: ["/professional-audio-interface.jpg", "/audio-interface-rear-connections.jpg", "/studio-desk-with-interface.jpg"],
   },
 
@@ -63,24 +67,24 @@ const audioVisualProducts = [
     title: "Wireless Bluetooth Headphones - Noise Cancelling",
     description:
       "Premium over-ear headphones with active noise cancellation. 30-hour battery life, premium leather ear cushions, Bluetooth 5.0, built-in microphone for calls. Perfect for music production, gaming, or everyday listening. Comes with carrying case and cables.",
-    priceCents: 17999, // $179.99
-    sellerLocation: "San Francisco, CA",
+    priceCents: 332900, // R3,329.00 (approx $179.99 * 18.5)
+    sellerLocation: "Durban, South Africa",
     images: ["/wireless-bluetooth-headphones.jpg", "/headphones-carrying-case.jpg", "/headphones-detail.jpg"],
   },
   {
     title: "Studio Monitor Speakers Pair - 5 Inch",
     description:
       "Pair of 5-inch powered studio monitors with bi-amplified design. 50W per speaker, frequency response 52Hz-35kHz, XLR and TRS inputs, front-facing bass port. Excellent for music production, mixing, and mastering. Includes isolation pads and cables.",
-    priceCents: 34999, // $349.99
-    sellerLocation: "Los Angeles, CA",
+    priceCents: 647400, // R6,474.00 (approx $349.99 * 18.5)
+    sellerLocation: "Cape Town, South Africa",
     images: ["/studio-monitor-speakers.jpg", "/monitor-speakers-pair.jpg", "/studio-setup-monitors.jpg"],
   },
   {
     title: "Professional Studio Headphones - Closed Back",
     description:
       "Reference-quality closed-back studio headphones with 45mm drivers. Frequency response 5Hz-40kHz, detachable cables, comfortable over-ear design for extended sessions. Perfect for tracking, mixing, and critical listening. Includes straight and coiled cables.",
-    priceCents: 24999, // $249.99
-    sellerLocation: "New York, NY",
+    priceCents: 462400, // R4,624.00 (approx $249.99 * 18.5)
+    sellerLocation: "Johannesburg, South Africa",
     images: ["/professional-studio-headphones.jpg", "/headphones-with-cables.jpg", "/headphones-on-stand.jpg"],
   },
 
@@ -89,8 +93,8 @@ const audioVisualProducts = [
     title: "LED Ring Light 18 Inch with Stand",
     description:
       "Professional 18-inch LED ring light with adjustable color temperature (3200K-5600K), dimmable brightness, phone holder, and 6ft stand. Perfect for photography, video recording, makeup tutorials, and live streaming. Includes remote control.",
-    priceCents: 8999, // $89.99
-    sellerLocation: "Los Angeles, CA",
+    priceCents: 166500, // R1,665.00 (approx $89.99 * 18.5)
+    sellerLocation: "Pretoria, South Africa",
     images: ["/led-ring-light-on-stand.jpg", "/ring-light-with-phone.jpg"],
   },
 
@@ -99,16 +103,16 @@ const audioVisualProducts = [
     title: "Portable Digital Audio Recorder",
     description:
       "Handheld digital recorder with 4-track recording, built-in stereo mics, XLR/TRS inputs. Records to SD card in WAV/MP3 format. Perfect for field recording, interviews, podcasts, and music. Includes windscreen, 32GB SD card, and batteries.",
-    priceCents: 19999, // $199.99
-    sellerLocation: "New York, NY",
+    priceCents: 369900, // R3,699.00 (approx $199.99 * 18.5)
+    sellerLocation: "Durban, South Africa",
     images: ["/portable-audio-recorder.jpg", "/digital-recorder-display.jpg", "/recorder-accessories.jpg"],
   },
   {
     title: "MIDI Keyboard Controller 49-Key",
     description:
       "49-key semi-weighted MIDI controller with velocity-sensitive keys, 8 drum pads, 8 knobs, 9 faders. USB powered, plug-and-play with all major DAWs. Perfect for music production and live performance. Includes comprehensive software bundle.",
-    priceCents: 12999, // $129.99
-    sellerLocation: "Austin, TX",
+    priceCents: 240500, // R2,405.00 (approx $129.99 * 18.5)
+    sellerLocation: "Cape Town, South Africa",
     images: ["/midi-keyboard-controller.jpg", "/midi-controller-pads.jpg"],
   },
 ];

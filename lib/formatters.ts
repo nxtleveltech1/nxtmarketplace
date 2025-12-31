@@ -1,9 +1,9 @@
 import { format, formatDistanceToNow } from "date-fns";
 
 export function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-ZA", {
     style: "currency",
-    currency: "USD",
+    currency: "ZAR",
   }).format(cents / 100);
 }
 
