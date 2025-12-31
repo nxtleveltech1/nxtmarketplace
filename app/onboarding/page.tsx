@@ -20,7 +20,7 @@ export default async function OnboardingPage() {
         </p>
         <div className="w-full space-y-4">
           <p className="text-center text-muted-foreground">
-            Hello, {user?.display_name || "there"}! Let's set up your account.
+            Hello, {user?.displayName || "there"}! Let&apos;s set up your account.
           </p>
           {/* Onboarding form can be added here */}
         </div>
