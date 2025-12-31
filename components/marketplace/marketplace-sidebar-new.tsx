@@ -91,14 +91,14 @@ function SidebarContent({
   const hasActiveFilters =
     filters.category !== "All" ||
     filters.priceRange[0] !== 0 ||
-    filters.priceRange[1] !== 5000 ||
+    filters.priceRange[1] !== 100000 ||
     filters.conditions.length > 0 ||
     filters.brands.length > 0;
 
   const clearFilters = () => {
     onFiltersChange({
       category: "All",
-      priceRange: [0, 5000],
+      priceRange: [0, 100000],
       conditions: [],
       brands: [],
     });
@@ -166,13 +166,13 @@ function SidebarContent({
                   value={filters.priceRange}
                   onValueChange={(value) => updateFilter("priceRange", value as [number, number])}
                   min={0}
-                  max={5000}
-                  step={50}
+                  max={100000}
+                  step={100}
                   className="w-full"
                 />
                 <div className="flex items-center justify-between text-xs text-sidebar-foreground/70">
-                  <span>${filters.priceRange[0]}</span>
-                  <span>${filters.priceRange[1] === 5000 ? "5000+" : filters.priceRange[1]}</span>
+                  <span>R{filters.priceRange[0].toLocaleString()}</span>
+                  <span>R{filters.priceRange[1] === 5000 ? "5,000+" : filters.priceRange[1].toLocaleString()}</span>
                 </div>
               </div>
             )}
@@ -273,9 +273,11 @@ export function MarketplaceSidebarNew({ filters, onFiltersChange, totalResults }
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-[280px] border-r bg-sidebar h-full">
-        <SidebarContent filters={filters} onFiltersChange={onFiltersChange} totalResults={totalResults} />
-      </div>
+      <aside className="hidden lg:block w-[280px] border-r bg-sidebar">
+        <div className="sticky top-16 h-[calc(100vh-4rem)]">
+          <SidebarContent filters={filters} onFiltersChange={onFiltersChange} totalResults={totalResults} />
+        </div>
+      </aside>
     </>
   );
 }

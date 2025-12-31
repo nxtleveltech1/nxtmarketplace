@@ -7,6 +7,11 @@ export async function getUserByClerkId(clerkId: string) {
   return user;
 }
 
+export async function getUserById(id: string) {
+  const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return user;
+}
+
 export async function getUserByEmail(email: string) {
   const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
   return user;

@@ -25,7 +25,7 @@ export function MarketplaceContent({ initialListings, initialSearch = "" }: Mark
   const [listings] = useState(initialListings);
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
-    priceRange: [0, 5000],
+    priceRange: [0, 100000],
     conditions: [],
     brands: [],
   });
@@ -44,9 +44,9 @@ export function MarketplaceContent({ initialListings, initialSearch = "" }: Mark
       // Filter by category
       const matchesCategory = filters.category === "All" || listing.category === filters.category;
 
-      // Filter by price range (convert cents to dollars)
-      const priceInDollars = listing.priceCents / 100;
-      const matchesPrice = priceInDollars >= filters.priceRange[0] && priceInDollars <= filters.priceRange[1];
+      // Filter by price range (convert cents to Rands)
+      const priceInRands = listing.priceCents / 100;
+      const matchesPrice = priceInRands >= filters.priceRange[0] && priceInRands <= filters.priceRange[1];
 
       // Filter by condition
       const matchesCondition = filters.conditions.length === 0 || filters.conditions.includes(listing.category || "");

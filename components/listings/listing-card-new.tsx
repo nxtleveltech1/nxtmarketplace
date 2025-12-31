@@ -66,7 +66,11 @@ export function ListingCardNew({ listing }: ListingCardProps) {
           {listing.sellerLocation && (
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="size-3" />
-              <span className="line-clamp-1">{listing.sellerLocation}</span>
+              <span className="line-clamp-1">
+                {listing.sellerLocation.includes("South Africa") 
+                  ? listing.sellerLocation 
+                  : `${listing.sellerLocation}, South Africa`}
+              </span>
             </div>
           )}
         </CardContent>
