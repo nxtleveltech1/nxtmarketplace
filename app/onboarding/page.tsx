@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/lib/db/users";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function OnboardingPage() {
   const { userId } = await auth();
@@ -16,13 +18,20 @@ export default async function OnboardingPage() {
       <main className="flex flex-col gap-8 items-center max-w-2xl">
         <h1 className="text-4xl font-bold text-center">Welcome to NXT Marketplace</h1>
         <p className="text-xl text-muted-foreground text-center">
-          Complete your profile to get started
+          Your account has been created successfully!
         </p>
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-6">
           <p className="text-center text-muted-foreground">
-            Hello, {user?.displayName || "there"}! Let&apos;s set up your account.
+            Hello, {user?.displayName || "there"}! You&apos;re all set to start buying and selling.
           </p>
-          {/* Onboarding form can be added here */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg">
+              <Link href="/marketplace">Browse Marketplace</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/seller/listings">Start Selling</Link>
+            </Button>
+          </div>
         </div>
       </main>
     </div>

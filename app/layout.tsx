@@ -70,7 +70,7 @@ export default function RootLayout({
 
   return (
     <ClerkProvider
-      afterSignInUrl="/dashboard"
+      afterSignInUrl="/marketplace"
       afterSignUpUrl="/onboarding"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
@@ -82,7 +82,7 @@ export default function RootLayout({
           <Providers>
             <header className="border-b">
               <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                <Link href="/home" className="text-xl font-bold">
+                <Link href="/marketplace" className="text-xl font-bold">
                   NXT Marketplace
                 </Link>
                 <SignedOut>

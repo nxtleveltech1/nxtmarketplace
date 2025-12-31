@@ -10,7 +10,7 @@ export function Header() {
   return (
     <header className="border-b sticky top-0 z-50 bg-background">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/home" className="text-xl font-bold">
+        <Link href="/marketplace" className="text-xl font-bold">
           NXT Marketplace
         </Link>
         <nav className="flex items-center gap-6">
@@ -22,10 +22,16 @@ export function Header() {
               Marketplace
             </Link>
             <Link
-              href="/dashboard"
-              className={pathname === "/dashboard" ? "font-semibold" : ""}
+              href="/seller/listings"
+              className={pathname?.startsWith("/seller") ? "font-semibold" : ""}
             >
-              Dashboard
+              Sell
+            </Link>
+            <Link
+              href="/orders"
+              className={pathname?.startsWith("/orders") ? "font-semibold" : ""}
+            >
+              Orders
             </Link>
             <UserButton />
           </SignedIn>
