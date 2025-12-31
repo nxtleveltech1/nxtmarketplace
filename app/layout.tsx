@@ -80,32 +80,6 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Providers>
-            <header className="border-b">
-              <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                <Link href="/marketplace" className="text-xl font-bold">
-                  NXT Marketplace
-                </Link>
-                <SignedOut>
-                  <div className="flex gap-4">
-                    <Link
-                      href="/sign-in"
-                      className="text-sm font-medium hover:underline"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/sign-up"
-                      className="text-sm font-medium border border-border px-4 py-2 rounded-md hover:bg-accent"
-                    >
-                      Sign Up
-                    </Link>
-                  </div>
-                </SignedOut>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-              </div>
-            </header>
             {children}
             <Toaster />
           </Providers>
