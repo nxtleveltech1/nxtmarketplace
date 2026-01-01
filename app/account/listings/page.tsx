@@ -34,8 +34,10 @@ export default async function MyListingsPage() {
   const listingsWithImages = await Promise.all(
     listings.map(async (item) => {
       const images = await getListingImages(item.listing.id);
+      const { createdAt, ...listingData } = item.listing;
       return {
-        ...item.listing,
+        ...listingData,
+        createdAt: createdAt.toISOString(),
         images,
       };
     })

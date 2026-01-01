@@ -32,8 +32,10 @@ export default async function FavouritesPage() {
   const listingsWithImages = await Promise.all(
     favourites.map(async (fav) => {
       const images = await getListingImages(fav.listing.id);
+      const { createdAt, ...listingData } = fav.listing;
       return {
-        ...fav.listing,
+        ...listingData,
+        createdAt: createdAt.toISOString(),
         images,
       };
     })
