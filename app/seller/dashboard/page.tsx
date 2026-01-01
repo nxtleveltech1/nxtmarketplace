@@ -25,12 +25,12 @@ export default async function SellerDashboardPage() {
   const sales = await getSalesBySellerId(user.id);
 
   const pendingListings = listings.filter(
-    (l) => l.status === "SUBMITTED" || l.status === "UNDER_ADMIN_REVIEW"
+    (l) => l.listing.status === "SUBMITTED" || l.listing.status === "UNDER_ADMIN_REVIEW"
   ).length;
 
   const totalSales = sales.length;
   const totalEarnings = sales.reduce(
-    (sum, sale) => sum + sale.sellerPayoutCents,
+    (sum, sale) => sum + sale.sale.sellerPayoutCents,
     0
   );
 
@@ -91,14 +91,14 @@ export default async function SellerDashboardPage() {
               <p className="text-muted-foreground">No listings yet</p>
             ) : (
               <div className="space-y-2">
-                {listings.slice(0, 5).map((listing) => (
+                {listings.slice(0, 5).map((item) => (
                   <Link
-                    key={listing.id}
-                    href={`/seller/listings/${listing.id}`}
+                    key={item.listing.id}
+                    href={`/seller/listings/${item.listing.id}`}
                     className="block p-2 hover:bg-muted rounded"
                   >
-                    <p className="font-medium">{listing.title}</p>
-                    <p className="text-sm text-muted-foreground">{listing.status}</p>
+                    <p className="font-medium">{item.listing.title}</p>
+                    <p className="text-sm text-muted-foreground">{item.listing.status}</p>
                   </Link>
                 ))}
               </div>
@@ -114,14 +114,14 @@ export default async function SellerDashboardPage() {
               <p className="text-muted-foreground">No sales yet</p>
             ) : (
               <div className="space-y-2">
-                {sales.slice(0, 5).map((sale) => (
+                {sales.slice(0, 5).map((item) => (
                   <Link
-                    key={sale.id}
-                    href={`/seller/sales/${sale.id}`}
+                    key={item.sale.id}
+                    href={`/seller/sales/${item.sale.id}`}
                     className="block p-2 hover:bg-muted rounded"
                   >
-                    <p className="font-medium">Sale #{sale.id.slice(0, 8)}</p>
-                    <p className="text-sm text-muted-foreground">{sale.status}</p>
+                    <p className="font-medium">Sale #{item.sale.id.slice(0, 8)}</p>
+                    <p className="text-sm text-muted-foreground">{item.sale.status}</p>
                   </Link>
                 ))}
               </div>
