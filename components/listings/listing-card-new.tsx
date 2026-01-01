@@ -67,9 +67,14 @@ export function ListingCardNew({ listing }: ListingCardProps) {
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="size-3" />
               <span className="line-clamp-1">
-                {listing.sellerLocation.includes("South Africa") 
-                  ? listing.sellerLocation 
-                  : `${listing.sellerLocation}, South Africa`}
+                {(() => {
+                  const location = listing.sellerLocation;
+                  const cleaned = location
+                    ?.replace(/,\s*(NY|CA|TX),?\s*/gi, "")
+                    ?.replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "")
+                    ?.trim() || location;
+                  return cleaned?.includes("South Africa") ? cleaned : `${cleaned}, South Africa`;
+                })()}
               </span>
             </div>
           )}

@@ -28,19 +28,28 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
 
   // Fetch database user ID when Clerk user is loaded
   useEffect(() => {
-    if (isLoaded && user && !currentUserId) {
-      fetch("/api/users")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.id) {
-            setDbUserId(data.id);
-          }
-        })
-        .catch(() => {
-          // User might not exist in DB yet
-        });
-    } else if (currentUserId) {
-      setDbUserId(currentUserId);
+    if (isLoaded && user) {
+      if (currentUserId) {
+        setDbUserId(currentUserId);
+      } else {
+        // Fetch user from API
+        fetch("/api/users")
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+            throw new Error("Not authenticated");
+          })
+          .then((data) => {
+            if (data && data.id) {
+              setDbUserId(data.id);
+            }
+          })
+          .catch((err) => {
+            // User might not exist in DB yet or not authenticated
+            console.log("Could not fetch user:", err);
+          });
+      }
     }
   }, [user, isLoaded, currentUserId]);
 

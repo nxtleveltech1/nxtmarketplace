@@ -41,7 +41,9 @@ export default async function MarketplacePage({
   return (
     <div className="min-h-screen flex flex-col">
       <MarketplaceHeader searchQuery={params?.search || ""} />
-      <MarketplaceContent initialListings={listingsForClient} initialSearch={params?.search || ""} />
+      <div className="flex-1 flex overflow-hidden">
+        <MarketplaceContent initialListings={listingsForClient} initialSearch={params?.search || ""} />
+      </div>
     </div>
   );
 }

@@ -76,7 +76,17 @@ export default async function ListingDetailPage({
               {listing.sellerLocation && (
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="size-4" />
-                  <span className="text-sm font-medium">{listing.sellerLocation}, South Africa</span>
+                  <span className="text-sm font-medium">
+                    {(() => {
+                      const location = listing.sellerLocation;
+                      // Remove US state codes and cities, keep only South African cities
+                      const cleaned = location
+                        .replace(/,\s*(NY|CA|TX),?\s*/gi, "")
+                        .replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "")
+                        .trim();
+                      return cleaned.includes("South Africa") ? cleaned : `${cleaned}, South Africa`;
+                    })()}
+                  </span>
                 </div>
               )}
             </div>
@@ -145,7 +155,16 @@ export default async function ListingDetailPage({
                 {listing.sellerLocation && (
                   <div className="flex justify-between py-2 border-b">
                     <span className="text-muted-foreground">Location</span>
-                    <span className="font-medium">{listing.sellerLocation}, South Africa</span>
+                    <span className="font-medium">
+                      {(() => {
+                        const location = listing.sellerLocation;
+                        const cleaned = location
+                          .replace(/,\s*(NY|CA|TX),?\s*/gi, "")
+                          .replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "")
+                          .trim();
+                        return cleaned.includes("South Africa") ? cleaned : `${cleaned}, South Africa`;
+                      })()}
+                    </span>
                   </div>
                 )}
                 {isVerified && (
