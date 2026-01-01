@@ -1,4 +1,5 @@
 import { listings, sales, users } from "@/db/schema";
+import type { Sale } from "@/db/schema/sales";
 import { COMMISSION_RATE } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { desc, eq, or } from "drizzle-orm";
@@ -134,8 +135,8 @@ export async function createSale(data: {
       salePriceCents: data.salePriceCents,
       commissionCents,
       sellerPayoutCents,
-      status: data.status as any,
-      financialStatus: data.financialStatus as any,
+      status: data.status as Sale["status"],
+      financialStatus: data.financialStatus as Sale["financialStatus"],
     })
     .returning();
   return sale;
@@ -146,11 +147,15 @@ export async function updateSaleStatus(
   status: string,
   financialStatus?: string
 ) {
-  const updateData: any = {
-    status: status as any,
+  const updateData: {
+    status: Sale["status"];
+    financialStatus?: Sale["financialStatus"];
+    updatedAt?: Date;
+  } = {
+    status: status as Sale["status"],
   };
   if (financialStatus) {
-    updateData.financialStatus = financialStatus as any;
+    updateData.financialStatus = financialStatus as Sale["financialStatus"];
   }
 
   const [updated] = await db

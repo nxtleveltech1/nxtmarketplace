@@ -1,4 +1,5 @@
 import { listingImages, listings } from "@/db/schema";
+import type { Listing } from "@/db/schema/listings";
 import { db } from "@/lib/db";
 import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
 
@@ -57,12 +58,10 @@ export async function getPublicListings(options?: {
   limit?: number;
   offset?: number;
 }) {
-  let query = db.select().from(listings);
-
   const conditions = [];
 
   if (options?.status && options.status.length > 0) {
-    conditions.push(inArray(listings.status, options.status as any));
+    conditions.push(inArray(listings.status, options.status as Listing["status"][]));
   } else {
     // Default to LIVE listings if no status specified
     conditions.push(eq(listings.status, "LIVE"));
@@ -78,18 +77,20 @@ export async function getPublicListings(options?: {
     );
   }
 
+  let query = db.select().from(listings);
+
   if (conditions.length > 0) {
-    query = query.where(and(...conditions)!) as any;
+    query = query.where(and(...conditions)!) as typeof query;
   }
 
-  query = query.orderBy(desc(listings.createdAt)) as any;
+  query = query.orderBy(desc(listings.createdAt)) as typeof query;
 
   if (options?.limit) {
-    query = query.limit(options.limit) as any;
+    query = query.limit(options.limit) as typeof query;
   }
 
   if (options?.offset) {
-    query = query.offset(options.offset) as any;
+    query = query.offset(options.offset) as typeof query;
   }
 
   return await query;
@@ -99,7 +100,7 @@ export async function getListingsByStatus(statuses: string[]) {
   return await db
     .select()
     .from(listings)
-    .where(inArray(listings.status, statuses as any))
+    .where(inArray(listings.status, statuses as Listing["status"][]))
     .orderBy(desc(listings.createdAt));
 }
 
@@ -119,7 +120,7 @@ export async function createListing(data: {
       description: data.description,
       priceCents: data.priceCents,
       sellerLocation: data.sellerLocation || null,
-      status: (data.status as any) || "SUBMITTED",
+      status: (data.status as Listing["status"]) || "SUBMITTED",
       updatedAt: new Date(),
     })
     .returning();
@@ -136,12 +137,26 @@ export async function updateListing(
     status: string;
   }>
 ) {
+  const updateData: {
+    title?: string;
+    description?: string;
+    priceCents?: number;
+    sellerLocation?: string | null;
+    status?: Listing["status"];
+    updatedAt: Date;
+  } = {
+    updatedAt: new Date(),
+  };
+
+  if (data.title !== undefined) updateData.title = data.title;
+  if (data.description !== undefined) updateData.description = data.description;
+  if (data.priceCents !== undefined) updateData.priceCents = data.priceCents;
+  if (data.sellerLocation !== undefined) updateData.sellerLocation = data.sellerLocation;
+  if (data.status !== undefined) updateData.status = data.status as Listing["status"];
+
   const [updated] = await db
     .update(listings)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
+    .set(updateData)
     .where(eq(listings.id, id))
     .returning();
   return updated;
