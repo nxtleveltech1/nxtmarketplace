@@ -44,25 +44,25 @@ export default async function SellerListingsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
-            <Card key={listing.id}>
+          {listings.map((item) => (
+            <Card key={item.listing.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle className="line-clamp-2">{listing.title}</CardTitle>
-                  <StatusBadge status={listing.status} />
+                  <CardTitle className="line-clamp-2">{item.listing.title}</CardTitle>
+                  <StatusBadge status={item.listing.status} />
                 </div>
               </CardHeader>
               <CardContent>
-                <PriceDisplay cents={listing.priceCents} className="text-2xl font-bold mb-4" />
+                <PriceDisplay cents={item.listing.priceCents} className="text-2xl font-bold mb-4" />
                 <div className="flex gap-2">
-                  <Link href={`/seller/listings/${listing.id}`} className="flex-1">
+                  <Link href={`/seller/listings/${item.listing.id}`} className="flex-1">
                     <Button variant="outline" className="w-full">
                       View
                     </Button>
                   </Link>
-                  {listing.status === "DRAFT" && (
+                  {item.listing.status === "DRAFT" && (
                     <>
-                      <Link href={`/seller/listings/${listing.id}/edit`}>
+                      <Link href={`/seller/listings/${item.listing.id}/edit`}>
                         <Button variant="outline" size="icon">
                           <Edit className="w-4 h-4" />
                         </Button>
