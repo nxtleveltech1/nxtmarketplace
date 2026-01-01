@@ -1,8 +1,8 @@
 import { Header } from "@/components/layout/header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, User } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { getConversationsByUserId } from "@/lib/db/messages";
 import { getUserByClerkId, getUserById } from "@/lib/db/users";

@@ -1,4 +1,4 @@
-import { pgTable, timestamp, uuid, unique } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { listings } from "./listings";
 import { users } from "./users";
 
@@ -8,7 +8,7 @@ export const favourites = pgTable("favourites", {
   listingId: uuid("listing_id").references(() => listings.id).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
-  uniqueUserListing: unique().on(table.userId, table.listingId),
+  uniqueUserListing: uniqueIndex("favourites_user_listing_idx").on(table.userId, table.listingId),
 }));
 
 export type Favourite = typeof favourites.$inferSelect;

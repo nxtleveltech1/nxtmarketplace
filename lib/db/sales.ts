@@ -1,6 +1,7 @@
-import { sales, listings, users } from "@/db/schema";
+import { listings, sales, users } from "@/db/schema";
+import { COMMISSION_RATE } from "@/lib/constants";
 import { db } from "@/lib/db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, or } from "drizzle-orm";
 
 export async function getSalesByBuyerId(buyerId: string) {
   const results = await db
@@ -62,6 +63,20 @@ export async function getSalesBySellerId(sellerId: string) {
   return salesWithBuyer;
 }
 
+export async function getSalesByUserId(userId: string) {
+  const results = await db
+    .select({
+      sale: sales,
+      listing: listings,
+    })
+    .from(sales)
+    .innerJoin(listings, eq(sales.listingId, listings.id))
+    .where(or(eq(sales.buyerId, userId), eq(sales.sellerId, userId))!)
+    .orderBy(desc(sales.createdAt));
+
+  return results.map((item) => item.sale);
+}
+
 export async function getSaleById(id: string) {
   const [sale] = await db
     .select()
@@ -95,4 +110,53 @@ export async function getSaleWithDetails(id: string) {
     seller: seller!,
     buyer: buyer!,
   };
+}
+
+export async function createSale(data: {
+  listingId: string;
+  buyerId: string;
+  sellerId: string;
+  salePriceCents: number;
+  courierCostsCents?: number;
+  status: string;
+  financialStatus: string;
+}) {
+  // Commission is calculated on sale price only, not including courier costs
+  const commissionCents = Math.round(data.salePriceCents * COMMISSION_RATE);
+  const sellerPayoutCents = data.salePriceCents - commissionCents;
+
+  const [sale] = await db
+    .insert(sales)
+    .values({
+      listingId: data.listingId,
+      buyerId: data.buyerId,
+      sellerId: data.sellerId,
+      salePriceCents: data.salePriceCents,
+      commissionCents,
+      sellerPayoutCents,
+      status: data.status as any,
+      financialStatus: data.financialStatus as any,
+    })
+    .returning();
+  return sale;
+}
+
+export async function updateSaleStatus(
+  id: string,
+  status: string,
+  financialStatus?: string
+) {
+  const updateData: any = {
+    status: status as any,
+  };
+  if (financialStatus) {
+    updateData.financialStatus = financialStatus as any;
+  }
+
+  const [updated] = await db
+    .update(sales)
+    .set(updateData)
+    .where(eq(sales.id, id))
+    .returning();
+  return updated;
 }

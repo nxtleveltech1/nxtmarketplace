@@ -16,17 +16,14 @@ import {
   ShoppingBag, 
   Package, 
   Settings,
-  LogOut,
   Store
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 
 export function UserAccountMenu() {
   const { user } = useUser();
-  const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { isFavourite, addFavourite, removeFavourite } from "@/lib/db/favourites";
+import { addFavourite, isFavourite, removeFavourite } from "@/lib/db/favourites";
 import { getUserByClerkId } from "@/lib/db/users";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
