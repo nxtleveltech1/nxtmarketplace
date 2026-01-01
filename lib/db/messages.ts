@@ -123,3 +123,47 @@ export async function markConversationAsRead(
     .where(and(...conditions));
 }
 
+export async function getConversationsByUserId(userId: string) {
+  const userMessages = await db
+    .select({
+      id: messages.id,
+      senderId: messages.senderId,
+      recipientId: messages.recipientId,
+      saleId: messages.saleId,
+      content: messages.content,
+      read: messages.read,
+      createdAt: messages.createdAt,
+    })
+    .from(messages)
+    .where(or(eq(messages.senderId, userId), eq(messages.recipientId, userId)))
+    .orderBy(desc(messages.createdAt));
+
+  const conversationMap = new Map<string, {
+    otherUserId: string;
+    saleId: string | null;
+    lastMessage: typeof userMessages[0];
+    unreadCount: number;
+  }>();
+
+  for (const msg of userMessages) {
+    const otherUserId = msg.senderId === userId ? msg.recipientId : msg.senderId;
+    const key = msg.saleId ? `${otherUserId}-${msg.saleId}` : otherUserId;
+
+    if (!conversationMap.has(key)) {
+      conversationMap.set(key, {
+        otherUserId,
+        saleId: msg.saleId,
+        lastMessage: msg,
+        unreadCount: 0,
+      });
+    }
+
+    const conv = conversationMap.get(key)!;
+    if (!msg.read && msg.recipientId === userId) {
+      conv.unreadCount++;
+    }
+  }
+
+  return Array.from(conversationMap.values());
+}
+

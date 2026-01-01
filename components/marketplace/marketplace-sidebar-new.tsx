@@ -273,8 +273,8 @@ export function MarketplaceSidebarNew({ filters, onFiltersChange, totalResults }
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-[280px] border-r bg-sidebar">
-        <div className="sticky top-16 h-[calc(100vh-4rem)]">
+      <aside className="hidden lg:flex w-[280px] shrink-0 border-r bg-sidebar">
+        <div className="sticky top-16 h-[calc(100vh-4rem)] w-full overflow-y-auto">
           <SidebarContent filters={filters} onFiltersChange={onFiltersChange} totalResults={totalResults} />
         </div>
       </aside>

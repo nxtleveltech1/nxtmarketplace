@@ -54,13 +54,14 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
   }, [user, isLoaded, currentUserId]);
 
   const handleSendMessage = async () => {
-    const userId = dbUserId || currentUserId;
-    
-    if (!userId || !isLoaded || !user) {
+    if (!isLoaded || !user) {
       toast.error("Please sign in to contact the seller");
       router.push("/sign-in");
       return;
     }
+
+    // Try to get userId, but proceed even if not found - API will handle it
+    const userId = dbUserId || currentUserId;
 
     if (!message.trim()) {
       toast.error("Please enter a message");
@@ -111,12 +112,57 @@ export function ContactSellerButton({ sellerId, sellerName, listingId, listingTi
     );
   }
 
-  if (!userId || !user) {
+  // Show contact button if Clerk user exists, even if DB user not found yet
+  // The API will handle creating the user if needed
+  if (!user) {
     return (
       <Button onClick={() => router.push("/sign-in")} variant="outline" className="w-full">
         <MessageSquare className="size-4 mr-2" />
         Sign in to Contact Seller
       </Button>
+    );
+  }
+
+  // If user exists but no DB ID yet, still show button - API will handle it
+  if (!userId) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="w-full">
+            <MessageSquare className="size-4 mr-2" />
+            Contact Seller
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Contact {sellerName}</DialogTitle>
+            <DialogDescription>
+              Send a message about: <strong>{listingTitle}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="message">Your Message</Label>
+              <Textarea
+                id="message"
+                placeholder="Ask about the product, shipping, or make an offer..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={6}
+                className="resize-none"
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSendMessage} disabled={loading || !message.trim()}>
+                {loading ? "Sending..." : "Send Message"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     );
   }
 

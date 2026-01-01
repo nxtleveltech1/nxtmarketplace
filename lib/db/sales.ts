@@ -1,148 +1,98 @@
-import { sales } from "@/db/schema";
+import { sales, listings, users } from "@/db/schema";
 import { db } from "@/lib/db";
-import { desc, eq, or } from "drizzle-orm";
-
-export function calculateCommission(salePriceCents: number): number {
-  return Math.floor(salePriceCents * 0.2); // 20% commission
-}
-
-export function calculateSellerPayout(
-  salePriceCents: number,
-  courierCostsCents: number = 0
-): number {
-  const commission = calculateCommission(salePriceCents);
-  return salePriceCents - commission - courierCostsCents;
-}
-
-export async function getSaleById(id: string) {
-  const [sale] = await db.select().from(sales).where(eq(sales.id, id)).limit(1);
-  return sale;
-}
+import { desc, eq } from "drizzle-orm";
 
 export async function getSalesByBuyerId(buyerId: string) {
-  return await db
-    .select()
+  const results = await db
+    .select({
+      sale: sales,
+      listing: listings,
+      sellerId: sales.sellerId,
+    })
     .from(sales)
+    .innerJoin(listings, eq(sales.listingId, listings.id))
     .where(eq(sales.buyerId, buyerId))
     .orderBy(desc(sales.createdAt));
+
+  const salesWithSeller = await Promise.all(
+    results.map(async (item) => {
+      const [seller] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, item.sellerId))
+        .limit(1);
+      return {
+        sale: item.sale,
+        listing: item.listing,
+        seller: seller!,
+      };
+    })
+  );
+
+  return salesWithSeller;
 }
 
 export async function getSalesBySellerId(sellerId: string) {
-  return await db
-    .select()
+  const results = await db
+    .select({
+      sale: sales,
+      listing: listings,
+      buyerId: sales.buyerId,
+    })
     .from(sales)
+    .innerJoin(listings, eq(sales.listingId, listings.id))
     .where(eq(sales.sellerId, sellerId))
     .orderBy(desc(sales.createdAt));
-}
 
-export async function getSalesByUserId(userId: string) {
-  return await db
-    .select()
-    .from(sales)
-    .where(or(eq(sales.buyerId, userId), eq(sales.sellerId, userId)))
-    .orderBy(desc(sales.createdAt));
-}
-
-export async function createSale(data: {
-  listingId: string;
-  buyerId: string;
-  sellerId: string;
-  salePriceCents: number;
-  courierCostsCents?: number;
-  status?: "INITIATED" | "PENDING_VERIFICATION" | "CONFIRMED";
-  financialStatus?: "PENDING" | "HELD_IN_ESCROW";
-}) {
-  const commissionCents = calculateCommission(data.salePriceCents);
-  const sellerPayoutCents = calculateSellerPayout(
-    data.salePriceCents,
-    data.courierCostsCents || 0
+  const salesWithBuyer = await Promise.all(
+    results.map(async (item) => {
+      const [buyer] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, item.buyerId))
+        .limit(1);
+      return {
+        sale: item.sale,
+        listing: item.listing,
+        buyer: buyer!,
+      };
+    })
   );
 
-  const [newSale] = await db
-    .insert(sales)
-    .values({
-      listingId: data.listingId,
-      buyerId: data.buyerId,
-      sellerId: data.sellerId,
-      salePriceCents: data.salePriceCents,
-      commissionCents,
-      sellerPayoutCents,
-      status: data.status || "INITIATED",
-      financialStatus: data.financialStatus || "HELD_IN_ESCROW",
-      createdAt: new Date(),
-    })
-    .returning();
-  return newSale;
+  return salesWithBuyer;
 }
 
-export async function updateSaleStatus(
-  id: string,
-  status: "INITIATED" | "PENDING_VERIFICATION" | "CONFIRMED" | "DISPATCHED" | "DELIVERED" | "COMPLETED" | "CANCELLED",
-  financialStatus?: "PENDING" | "HELD_IN_ESCROW" | "SETTLED" | "PAID_OUT" | "REFUNDED"
-) {
-  const updates: { 
-    status: typeof status; 
-    updatedAt: Date; 
-    financialStatus?: typeof financialStatus; 
-    completedAt?: Date 
-  } = {
-    status,
-    updatedAt: new Date(),
+export async function getSaleById(id: string) {
+  const [sale] = await db
+    .select()
+    .from(sales)
+    .where(eq(sales.id, id))
+    .limit(1);
+  return sale;
+}
+
+export async function getSaleWithDetails(id: string) {
+  const [saleData] = await db
+    .select({
+      sale: sales,
+      listing: listings,
+      sellerId: sales.sellerId,
+      buyerId: sales.buyerId,
+    })
+    .from(sales)
+    .innerJoin(listings, eq(sales.listingId, listings.id))
+    .where(eq(sales.id, id))
+    .limit(1);
+
+  if (!saleData) return null;
+
+  const [seller] = await db.select().from(users).where(eq(users.id, saleData.sellerId)).limit(1);
+  const [buyer] = await db.select().from(users).where(eq(users.id, saleData.buyerId)).limit(1);
+
+  return {
+    sale: saleData.sale,
+    listing: saleData.listing,
+    seller: seller!,
+    buyer: buyer!,
   };
-
-  if (financialStatus) {
-    updates.financialStatus = financialStatus;
-  }
-
-  if (status === "COMPLETED") {
-    updates.completedAt = new Date();
-    updates.financialStatus = (financialStatus || "PAID_OUT") as "PENDING" | "HELD_IN_ESCROW" | "SETTLED" | "PAID_OUT" | "REFUNDED";
-  }
-
-  const [updatedSale] = await db
-    .update(sales)
-    .set(updates)
-    .where(eq(sales.id, id))
-    .returning();
-  return updatedSale;
 }
-
-export async function updateSaleFinancialStatus(
-  id: string,
-  financialStatus: "PENDING" | "HELD_IN_ESCROW" | "SETTLED" | "PAID_OUT" | "REFUNDED"
-) {
-  const [updatedSale] = await db
-    .update(sales)
-    .set({
-      financialStatus,
-    })
-    .where(eq(sales.id, id))
-    .returning();
-  return updatedSale;
-}
-
-export async function completeSale(id: string) {
-  const [updatedSale] = await db
-    .update(sales)
-    .set({
-      status: "COMPLETED",
-      financialStatus: "PAID_OUT",
-      completedAt: new Date(),
-    })
-    .where(eq(sales.id, id))
-    .returning();
-  return updatedSale;
-}
-
-export async function cancelSale(id: string) {
-  const [updatedSale] = await db
-    .update(sales)
-    .set({
-      status: "CANCELLED",
-      financialStatus: "REFUNDED",
-    })
-    .where(eq(sales.id, id))
-    .returning();
-  return updatedSale;
-}
-

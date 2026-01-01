@@ -1,5 +1,6 @@
 export * from "./courier-shipments";
 export * from "./enums";
+export * from "./favourites";
 export * from "./listing-images";
 export * from "./listings";
 export * from "./messages";

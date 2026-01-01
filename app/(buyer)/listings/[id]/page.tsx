@@ -78,13 +78,20 @@ export default async function ListingDetailPage({
                   <MapPin className="size-4" />
                   <span className="text-sm font-medium">
                     {(() => {
-                      const location = listing.sellerLocation;
-                      // Remove US state codes and cities, keep only South African cities
-                      const cleaned = location
-                        .replace(/,\s*(NY|CA|TX),?\s*/gi, "")
-                        .replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "")
-                        .trim();
-                      return cleaned.includes("South Africa") ? cleaned : `${cleaned}, South Africa`;
+                      if (!listing.sellerLocation) return "";
+                      let location = listing.sellerLocation;
+                      // Remove US state codes
+                      location = location.replace(/,\s*(NY|CA|TX),?\s*/gi, "");
+                      // Remove US cities
+                      location = location.replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "");
+                      location = location.trim();
+                      // Remove leading/trailing commas
+                      location = location.replace(/^,\s*|\s*,$/g, "");
+                      // Ensure South Africa is included
+                      if (!location.includes("South Africa")) {
+                        location = location ? `${location}, South Africa` : "South Africa";
+                      }
+                      return location;
                     })()}
                   </span>
                 </div>
@@ -157,12 +164,15 @@ export default async function ListingDetailPage({
                     <span className="text-muted-foreground">Location</span>
                     <span className="font-medium">
                       {(() => {
-                        const location = listing.sellerLocation;
-                        const cleaned = location
-                          .replace(/,\s*(NY|CA|TX),?\s*/gi, "")
-                          .replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "")
-                          .trim();
-                        return cleaned.includes("South Africa") ? cleaned : `${cleaned}, South Africa`;
+                        if (!listing.sellerLocation) return "";
+                        let location = listing.sellerLocation;
+                        location = location.replace(/,\s*(NY|CA|TX),?\s*/gi, "");
+                        location = location.replace(/(New York|Los Angeles|San Francisco|Austin),?\s*/gi, "");
+                        location = location.trim().replace(/^,\s*|\s*,$/g, "");
+                        if (!location.includes("South Africa")) {
+                          location = location ? `${location}, South Africa` : "South Africa";
+                        }
+                        return location;
                       })()}
                     </span>
                   </div>

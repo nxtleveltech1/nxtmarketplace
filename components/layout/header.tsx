@@ -1,8 +1,9 @@
 "use client";
 
-import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserAccountMenu } from "./user-account-menu";
 
 export function Header() {
   const pathname = usePathname();
@@ -33,7 +34,7 @@ export function Header() {
             >
               Orders
             </Link>
-            <UserButton />
+            <UserAccountMenu />
           </SignedIn>
           <SignedOut>
             <SignInButton />
