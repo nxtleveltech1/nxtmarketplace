@@ -24,7 +24,7 @@ export default async function SellerSalesPage() {
   const sales = await getSalesBySellerId(user.id);
 
   const totalEarnings = sales.reduce(
-    (sum, sale) => sum + sale.sellerPayoutCents,
+    (sum, item) => sum + item.sale.sellerPayoutCents,
     0
   );
 
@@ -45,36 +45,36 @@ export default async function SellerSalesPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {sales.map((sale) => (
-            <Link key={sale.id} href={`/seller/sales/${sale.id}`}>
+          {sales.map((item) => (
+            <Link key={item.sale.id} href={`/seller/sales/${item.sale.id}`}>
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <CardTitle>Sale #{sale.id.slice(0, 8)}</CardTitle>
-                    <StatusBadge status={sale.status} />
+                    <CardTitle>Sale #{item.sale.id.slice(0, 8)}</CardTitle>
+                    <StatusBadge status={item.sale.status} />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Sale Price</p>
-                      <PriceDisplay cents={sale.salePriceCents} className="font-semibold" />
+                      <PriceDisplay cents={item.sale.salePriceCents} className="font-semibold" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Commission</p>
-                      <PriceDisplay cents={sale.commissionCents} className="font-semibold" />
+                      <PriceDisplay cents={item.sale.commissionCents} className="font-semibold" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Payout</p>
-                      <PriceDisplay cents={sale.sellerPayoutCents} className="font-semibold text-green-600" />
+                      <PriceDisplay cents={item.sale.sellerPayoutCents} className="font-semibold text-green-600" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Date</p>
-                      <p className="font-semibold">{formatDate(sale.createdAt)}</p>
+                      <p className="font-semibold">{formatDate(item.sale.createdAt)}</p>
                     </div>
                   </div>
                   <div className="mt-4">
-                    <StatusBadge status={sale.financialStatus} />
+                    <StatusBadge status={item.sale.financialStatus} />
                   </div>
                 </CardContent>
               </Card>
