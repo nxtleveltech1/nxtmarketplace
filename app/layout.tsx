@@ -71,6 +71,15 @@ export default function RootLayout({
       afterSignUpUrl="/onboarding"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
+      appearance={{
+        variables: {
+          colorPrimary: "var(--primary)",
+          colorBackground: "var(--background)",
+          colorText: "var(--foreground)",
+          colorInputBackground: "var(--background)",
+          colorInputText: "var(--foreground)",
+        },
+      }}
     >
       <html lang="en">
         <body
