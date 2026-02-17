@@ -1,6 +1,5 @@
 import { createUser, updateUser, getUserByClerkId } from "@/lib/db/users";
-import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import type { WebhookEvent } from "@clerk/backend/webhooks";
+import { verifyWebhook } from "@clerk/backend/webhooks";
 
 export async function POST(req: Request) {
   const signingSecret =
@@ -15,7 +14,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const evt = (await verifyWebhook(req, { signingSecret })) as WebhookEvent;
+    const evt = await verifyWebhook(req, { signingSecret });
     const eventType = evt.type;
     console.log(`[Webhook] Received event: ${eventType}`);
 
