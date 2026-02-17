@@ -17,7 +17,7 @@ Add these to your `.env.local`:
 DATABASE_URL=postgresql://your-connection-string
 
 # Clerk Webhook (for user sync)
-CLERK_WEBHOOK_SECRET=whsec_your_webhook_secret
+CLERK_WEBHOOK_SIGNING_SECRET=whsec_your_signing_secret
 ```
 
 ## Database Schema
